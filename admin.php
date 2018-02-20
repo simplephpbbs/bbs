@@ -15,7 +15,7 @@ if (is_array($id) && isset($del)) {  // Delete messages
     $cond = "";
     for( $i = 0; $i<count($id); $i++) {
         $q = mysqli_query("SELECT pid from $mysql_table WHERE id='$id[$i]'");
-        $row = mysql_fetch_array($q);
+        $row = mysqli_fetch_array($q);
         $pid = $row["pid"];
         mysqli_query("UPDATE $mysql_table set pid=$pid,level=level-1 where pid='$id[$i]'");
         mysqli_query("DELETE FROM $mysql_table WHERE id='$id[$i]'");
@@ -105,7 +105,7 @@ if (!empty($allow_stats)) {
 echo "</tr>\n";
 
 
-while($row = mysql_fetch_array($q)) {
+while($row = mysqli_fetch_array($q)) {
       $id=$row["id"];
 
       $timesm=$row["ttimes"];
