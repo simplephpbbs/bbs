@@ -1,6 +1,6 @@
 <?
-include("setup.php3");
-include("lib.php3");
+include("setup.php");
+include("lib.php");
 if ( empty($AUTH_TYPE) ) { // If there is no Apache authentication
     if ( ($PHP_AUTH_NAME != "$admin_name") && ($PHP_AUTH_PW != "$admin_pwd" ) ){
         RequireAuthentication("FORUM Administrating");
@@ -8,28 +8,28 @@ if ( empty($AUTH_TYPE) ) { // If there is no Apache authentication
     }
 }
 
-mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base");
+mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base");
 
 if (is_array($id) && isset($del)) {  // Delete messages
     $cond = "";
     for( $i = 0; $i<count($id); $i++) {
-        $q = mysql_query("SELECT pid from $mysql_table WHERE id='$id[$i]'");
+        $q = mysqli_query("SELECT pid from $mysql_table WHERE id='$id[$i]'");
         $row = mysql_fetch_array($q);
         $pid = $row["pid"];
-        mysql_query("UPDATE $mysql_table set pid=$pid,level=level-1 where pid='$id[$i]'");
-        mysql_query("DELETE FROM $mysql_table WHERE id='$id[$i]'");
+        mysqli_query("UPDATE $mysql_table set pid=$pid,level=level-1 where pid='$id[$i]'");
+        mysqli_query("DELETE FROM $mysql_table WHERE id='$id[$i]'");
         //if parent haven't any child then parent = 'N'
-        $q = mysql_query("SELECT id from $mysql_table where pid=$pid");
-        if(mysql_num_rows($q) == 0) mysql_query("UPDATE $mysql_table set parent='N' where id=$pid");
+        $q = mysqli_query("SELECT id from $mysql_table where pid=$pid");
+        if(mysqli_num_rows($q) == 0) mysqli_query("UPDATE $mysql_table set parent='N' where id=$pid");
         $cond .= " OR id='$id[$i]' ";
     }
     if ( !empty($allow_stats)) {
-        mysql_query("DELETE FROM _$mysql_table"."_stats WHERE 1=0 $cond");
+        mysqli_query("DELETE FROM _$mysql_table"."_stats WHERE 1=0 $cond");
     }
 }
 
-if (isset($del)) Header("admin.php3?lang=$lang&js=$js");
+if (isset($del)) Header("admin.php?lang=$lang&js=$js");
 
 if (!isset($sort)) {
     $sort = "times asc";
@@ -37,13 +37,13 @@ if (!isset($sort)) {
 $invert = ((strstr( $sort ,"asc"))? "desc":"asc");
 
 if ( empty($allow_stats)) {
-$q=mysql_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
+$q=mysqli_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
                    ",UNIX_TIMESTAMP(times) as ut ".
                    "from $mysql_table ".
                    " order by $sort");
 }
 else {
-$q=mysql_query("select $mysql_table.*,".
+$q=mysqli_query("select $mysql_table.*,".
                "date_format(times, '%d/%m/%Y %H:%i') as ttimes,".
                "count($stat_table.id) as views, ".
                "UNIX_TIMESTAMP(times) as ut ".
@@ -52,18 +52,18 @@ $q=mysql_query("select $mysql_table.*,".
                "group by $mysql_table.id ".
                "order by $sort");
 }
-print mysql_error();
+print mysqli_error();
 ?>
 
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!--
 function EditMsg (id,js,lang) {
     if ( window.name != "editmsg") {
-        w = window.open ("editmsg.php3?id=" + id + "&js=" + js + "&lang=" +lang, "editmsg", "<? echo $js_window_params ?>");
+        w = window.open ("editmsg.php?id=" + id + "&js=" + js + "&lang=" +lang, "editmsg", "<? echo $js_window_params ?>");
         w.focus();
     }
     else {
-        return 'editmsg.php3?id=' + id + '&js=' + js + "&lang=" +lang;
+        return 'editmsg.php?id=' + id + '&js=' + js + "&lang=" +lang;
     }
     
     return '#';
@@ -72,7 +72,7 @@ function EditMsg (id,js,lang) {
 <?
 if($js!=1)
 {
-    echo "window.location=\"admin.php3?js=1&lang=$lang\"";
+    echo "window.location=\"admin.php?js=1&lang=$lang\"";
     $js=0; //javascript test
 }
 ?>
@@ -84,9 +84,9 @@ if($js!=1)
 include("short_header.inc");
 ?>
 
-<A HREF="./index.php3?js=<? echo $js; ?>&lang=<? echo $lang; ?>" class=t>Forum</a> &nbsp;
+<A HREF="./index.php?js=<? echo $js; ?>&lang=<? echo $lang; ?>" class=t>Forum</a> &nbsp;
 <?
-if ( mysql_num_rows($q) >0 ) {
+if ( mysqli_num_rows($q) >0 ) {
 ?>
 <form onSubmit="return window.confirm('<? echo $msg["really_delete"]; ?>')" method=post >
 <font size="-1"><input name=del type=submit value="<? echo $msg["Delete_selected_messages"]; ?>"></font>
@@ -94,12 +94,12 @@ if ( mysql_num_rows($q) >0 ) {
 <?
 
 echo "<tr valign=\"middle\" bgcolor=\"$headercolor\" ><td></td>";
-echo " <td class=\"t\" ><a class=t href=\"admin.php3?js=$js&lang=$lang&sort=subj+$invert\">$msg[subject]</A></td>\n";
-echo " <td class=\"t\" width='$authwidth'><a class=t href=\"admin.php3?js=$js&lang=$lang&sort=author+$invert\">$msg[author]</a></td>\n";
-echo "<td class=\"t\" width='$datewidth'><a class=t href=\"admin.php3?js=$js&lang=$lang&sort=times+$invert\">$msg[date]</a></td>";
+echo " <td class=\"t\" ><a class=t href=\"admin.php?js=$js&lang=$lang&sort=subj+$invert\">$msg[subject]</A></td>\n";
+echo " <td class=\"t\" width='$authwidth'><a class=t href=\"admin.php?js=$js&lang=$lang&sort=author+$invert\">$msg[author]</a></td>\n";
+echo "<td class=\"t\" width='$datewidth'><a class=t href=\"admin.php?js=$js&lang=$lang&sort=times+$invert\">$msg[date]</a></td>";
 
 if (!empty($allow_stats)) {
-    print "<td class=t align=center><a class=t href=\"admin.php3?js=$js&lang=$lang&sort=views+$invert\">$msg[views]</a></td>";
+    print "<td class=t align=center><a class=t href=\"admin.php?js=$js&lang=$lang&sort=views+$invert\">$msg[views]</a></td>";
 }
 
 echo "</tr>\n";
@@ -117,7 +117,7 @@ while($row = mysql_fetch_array($q)) {
       echo "<tr valign=\"center\" bgcolor=\"" . RCount() . "\" height=10>";
       echo "<td class=t><small><input name=id[] type=checkbox value=$id></small></td>";
       echo "<td class=t>";
-      echo "<a href=\"editmsg.php3?id=$id&lang=$lang&js=$js\" OnClick=\"this.href = EditMsg($id,$js,'$lang');\">";
+      echo "<a href=\"editmsg.php?id=$id&lang=$lang&js=$js\" OnClick=\"this.href = EditMsg($id,$js,'$lang');\">";
       echo $subjm;
       echo "</a>";
       echo "</td>\n<td class=t>";
@@ -126,7 +126,7 @@ while($row = mysql_fetch_array($q)) {
       echo $timesm;
 
       if( !empty($allow_stats) ){
-          echo "</td><td align=center><A HREF=\"stats.php3?id=$id\" class=t>$row[views]</a>";
+          echo "</td><td align=center><A HREF=\"stats.php?id=$id\" class=t>$row[views]</a>";
       }
       
       echo "</td></tr>";      
