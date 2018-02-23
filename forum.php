@@ -1,5 +1,5 @@
 <?
-if ($days=="") 
+if ($days=="")
 {
     $days = $default_days;
 }
@@ -13,11 +13,11 @@ if (!empty($open) && $ppid == 0)
 <!--
 function ReadMsg (id,pid,days,js,lang) {
     if ( window.name != "newmsg" && (<?echo intval($view_new_win)?> == 1) ) {
-        w = window.open ("readmsg.php3?id=" + id + "&pid=" + pid +"&days="+days+"&js="+js+"&lang="+lang, "newmsg", "<? echo $js_window_params ?>");
+        w = window.open ("readmsg.php?id=" + id + "&pid=" + pid +"&days="+days+"&js="+js+"&lang="+lang, "newmsg", "<? echo $js_window_params ?>");
         w.focus();
     }
     else {
-        return 'readmsg.php3?id=' + id + '&pid=' + pid +'&days=' +days +'&js=' +js +'&lang=' +lang;
+        return 'readmsg.php?id=' + id + '&pid=' + pid +'&days=' +days +'&js=' +js +'&lang=' +lang;
     }
     
     return '#';
@@ -27,23 +27,23 @@ function ReadMsg (id,pid,days,js,lang) {
 
 <?
 
-mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base");
+mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base");
 
-$q=mysql_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
+$q=mysqli_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
                    ",UNIX_TIMESTAMP(times) as ut ".
                    "from $mysql_table ".
                    "where level<='$maxlevel' ".
                    "and archive='N' order by times $order_asc_or_desc");
                    
-while($row = mysql_fetch_array($q)) {
+while($row = mysqli_fetch_array($q)) {
       $pid=$row["pid"];
       $id=$row["id"];
 
       $idtemp[$pid][]=$id;
       $order_arr[] = $id;
      
-      $pppid[$id] = $pid; 
+      $pppid[$id] = $pid;
       $timesm[$id]=$row["ttimes"];
       $ut[$id] = $row["ut"];          // UNIX timestamp
       $subjm[$id]=$row["subj"];
@@ -83,7 +83,7 @@ function order_for_output_recursive($pid)
           $parent_[$val]=$parentm[$val];
           return true;
       }
-  } 
+  }
   else {   // We are parent message
       $i = 0;
       $has_ok = false;
@@ -126,20 +126,20 @@ function is_open($id)
 {
     global $open;
 
-    if (isset($open[$id])) 
+    if (isset($open[$id]))
         if ($open[$id] != 0) return true;
     return false;
 }
 
 ### Setup order of messages
-function make_orderedidm($pid) 
+function make_orderedidm($pid)
 {
     global $is_ok, $orderedidm, $idtemp, $levelm, $pppid, $ppid, $open;
     $i = 0;
     $orderedidm[] = $pid;
     while (isset($idtemp[$pid][$i])) {
         $val = $idtemp[$pid][$i];
-        if ($is_ok[$val] == 1) 
+        if ($is_ok[$val] == 1)
         {
            if($levelm[$val] == 1 && $ppid == 0) //only if in main window
            {
@@ -200,48 +200,48 @@ echo " <td class=\"t\"><b>$msg[subject]</b></td>\n";
 echo " <td width=\"$authwidth\" class=\"t\"><b>$msg[author]</b></td>\n <td width=\"$datewidth\" class=\"t\"><b>$msg[date]</b></td>";
 echo "</tr>\n";
 
-while ( list( $key, $val ) = each($orderedidm)) 
+while ( list( $key, $val ) = each($orderedidm))
 {
     if($val!=0) //skip first empty line
     {
         echo "<tr valign=\"center\" bgcolor=\"" . RCount() . "\" height=10><td valign=\"center\">\n";
         //$imgs array filling
-        if($level_[$val]==0) 
+        if($level_[$val]==0)
         {
             unset($imgs[$level_[$val]]);
         }
-        elseif(lastmsg($key,$val)) 
+        elseif(lastmsg($key,$val))
         {
             $imgs[$level_[$val]]=2;
         }
-        else 
+        else
         {
-            $imgs[$level_[$val]]=1; 
+            $imgs[$level_[$val]]=1;
         }
-        for($i=0;$i<=$level_[$val];$i++) 
+        for($i=0;$i<=$level_[$val];$i++)
         {
             //threads images
-            if(isset($imgs[$i])) 
+            if(isset($imgs[$i]))
             {
-                if($i!=$level_[$val]) 
+                if($i!=$level_[$val])
                 {
                     $lastlevelkey=lastthislevelkey($key,$i);
-                    if(lastmsg($lastlevelkey,$orderedidm[$lastlevelkey])) 
+                    if(lastmsg($lastlevelkey,$orderedidm[$lastlevelkey]))
                     {
                         echo "<img src=\"img/b0.gif\" width=20 height=20 border=0 vspace=0 hspace=0 align=left>";
                     }
-                    else 
+                    else
                     {
                         echo "<img src=\"img/b3.gif\" width=20 height=20 border=0 vspace=0 hspace=0 align=left>";
                     }
                 }
-                else 
+                else
                 {
                     echo "<img src=\"img/b$imgs[$i].gif\" width=20 height=20 border=0 vspace=0 hspace=0 align=left>";
                 }
             }
             else
-            {   
+            {
                 //'+' and '-' images
                 if($level_[$val]==0 && $parent_[$val]=='Y' && $ppid == 0)
                 {
@@ -273,25 +273,25 @@ while ( list( $key, $val ) = each($orderedidm))
         $l=$maxlevel-$level_[$val];
         $pd = intval($pid_[$val]);
  
-        if ($val != $iid) 
-        { 
-            echo " <nobr><a class=\"s\" href=\"readmsg.php3?id=$val&pid=$pd&days=$days&js=$js&lang=$lang\" OnClick=\"window.status=''; this.href = ReadMsg($val,$pd,$days,$js,'$lang');\" ";
+        if ($val != $iid)
+        {
+            echo " <nobr><a class=\"s\" href=\"readmsg.php?id=$val&pid=$pd&days=$days&js=$js&lang=$lang\" OnClick=\"window.status=''; this.href = ReadMsg($val,$pd,$days,$js,'$lang');\" ";
             mouse_text($msg['view_article']);
             echo " >$subj_[$val]</a>";
-            if (isset($has_hidden_messages[$val])) 
+            if (isset($has_hidden_messages[$val]))
             {
                 print "&nbsp;&nbsp;";
-                print "<a class=\"s\" href=\"readmsg.php3?id=$val&pid=$pd&days=1000000&js=$js&lang=$lang\" OnClick=\"window.status=''; this.href = ReadMsg($val,$pd,1000000,$js,'$lang');\" ";
+                print "<a class=\"s\" href=\"readmsg.php?id=$val&pid=$pd&days=1000000&js=$js&lang=$lang\" OnClick=\"window.status=''; this.href = ReadMsg($val,$pd,1000000,$js,'$lang');\" ";
                 mouse_text($msg['all_articles']);
                 print " ><span class=\"d\"><FONT SIZE=-2><u>$msg[all_articles]</u></FONT></span></a>";
             }
-            if (!empty($set_cookie) && empty($viewed_[$val])) 
+            if (!empty($set_cookie) && empty($viewed_[$val]))
             {
                 print '<img src="img/new.gif" border=0 hspace=8 vspace=0>';
             }
             echo "</nobr>\n";
         }
-        else 
+        else
         {
             echo " <nobr><b><span class=\"t\">$subj_[$val]</span></b></nobr>\n";
         }
@@ -369,11 +369,11 @@ while (list( $key, $val ) = each( $langs))
 </SELECT>
 <? if ($js == 0) { ?>
 &nbsp;<input type="submit" value="<?echo $msg["go"]; ?>">
-<? } ?> 
+<? } ?>
 </SMALL>
 </div>
 </td>
-</table> 
+</table>
 <input type="hidden" name="js" value="<? echo $js?>">
 <input type="hidden" name="open" value="<? if(!empty($open)) echo $opentemp = serialize($open); ?>">
 </FORM>
