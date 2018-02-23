@@ -35,7 +35,7 @@ $order_asc_or_desc = "asc";
 
 
 ## If there is no Apache authentication for the administration scripts
-## (admin.php3 and stats.php3), we do our own authentication with
+## (admin.php and stats.php), we do our own authentication with
 ## username/password entered below:
 $admin_name = "admin";
 $admin_pwd  = "change_it";
@@ -114,9 +114,9 @@ function do_stats($id)
         return;
     }
     
-    $res = @mysql_query("DESC $stat_table");
-    if ( mysql_errno() != 0 ) {
-        mysql_query(
+    $res = @mysqli_query("DESC $stat_table");
+    if ( mysqli_errno() != 0 ) {
+        mysqli_query(
             "create table $stat_table (".
             "id int not null, ".
             "host char(80) not null, ".
@@ -125,7 +125,7 @@ function do_stats($id)
             "index (host) )");
     }
     
-    mysql_query("insert into $stat_table (id, host) ".
+    mysqli_query("insert into $stat_table (id, host) ".
                 " values ($id,'$REMOTE_HOST') ");
 }
 
