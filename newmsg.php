@@ -1,6 +1,6 @@
 <?
-include("lib.php3");
-include("setup.php3"); 
+include("lib.php");
+include("setup.php");
 
 if ($days=="") {
     $days = $default_days;
@@ -12,11 +12,11 @@ if( empty($referer) ){
 
 if(isset($cancel) ) Header("Location: $referer"); //without JS
 
-$result = mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base",$result);
+$result = mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base",$result);
 
 $pid = IntVal ("$id");
-$sub = StrVal ("$sub"); 
+$sub = StrVal ("$sub");
 if($pid=="") $pid=0;
 if($sub=="") $sub="N";
 
@@ -27,7 +27,7 @@ if($sub_thread == 1) $sub="Y";
 
 $cwnd = 0;
 //echo $action,$pid;
-if ($action == "add") 
+if ($action == "add")
 {
  if($subj=="") //without JS
  {
@@ -39,36 +39,36 @@ if ($action == "add")
   echo "<html><body><br><br><center><h2>$msg[enter_name]</h2></center></body></html>";
   exit;
  }
- if ($set_cookie == 1) { // in setup.php3
+ if ($set_cookie == 1) { // in setup.php
     $itcusername = $author;
     $itcuseremail = $email;
     SaveUserInCookie();
  }
 
-// $subj = addslashes (ereg_replace("<","&lt;",ereg_replace ("\"", "'", "$subj")));
-// $content = addslashes (ereg_replace("<","&lt;",ereg_replace ("\"", "'", "$content")));
+// $subj = addslashes (preg_replace("<","&lt;",preg_replace ("\"", "'", "$subj")));
+// $content = addslashes (preg_replace("<","&lt;",preg_replace ("\"", "'", "$content")));
  
  if($pid!=0)
  {
-  $q=mysql_query("select * from $mysql_table where id = " . $pid);
-  $row = mysql_fetch_array($q);
+  $q=mysqli_query("select * from $mysql_table where id = " . $pid);
+  $row = mysqli_fetch_array($q);
   $level = $row["level"];
-  $level++; 
+  $level++;
   if($row["pid"]==0) $sub="Y";
  }
- else 
+ else
  {
      $level=0;
      $sub="N";
  }
- if($sub=="N" && $pid!=0) 
+ if($sub=="N" && $pid!=0)
  {
      $pid=$row["pid"];
      $level--;
  }
 
- $q=mysql_query("insert into $mysql_table values (0,'$pid',now(),'$subj','$author','$email','$content','N','$level','N')");
- if($sub=="Y") mysql_query("update $mysql_table set parent='Y' where id=$pid");
+ $q=mysqli_query("insert into $mysql_table values (0,'$pid',now(),'$subj','$author','$email','$content','N','$level','N')");
+ if($sub=="Y") mysqli_query("update $mysql_table set parent='Y' where id=$pid");
 
  if ( !empty($admin_email) ) {
     $body = "New message in FORUM: \n\n".
@@ -85,8 +85,8 @@ if ($action == "add")
 
  if ( $with_reply_author && $reply==1 && $pid!=0 )
  {
-    $q = mysql_query("select email from $mysql_table where id=$pid");
-    $row = mysql_fetch_array($q);
+    $q = mysqli_query("select email from $mysql_table where id=$pid");
+    $row = mysqli_fetch_array($q);
     $parent_email = $row["email"];
     if ($parent_email != "")
     {
@@ -105,12 +105,12 @@ if ($action == "add")
 }
 
 
-if ($pid != 0) 
+if ($pid != 0)
 {
- $q=mysql_query("select * from $mysql_table where id=$pid");
- $row = mysql_fetch_array($q);
+ $q=mysqli_query("select * from $mysql_table where id=$pid");
+ $row = mysqli_fetch_array($q);
  $subj = $row["subj"];
- if(!ereg("Re: ", $subj))
+ if(!preg("Re: ", $subj))
  {
   $ssubj = "Re: " . $subj;
  }
@@ -142,13 +142,13 @@ function formsubmit() {
 function formquote() {
         vvv = "";
 <?  if ($pid != 0) {
-        $q = mysql_query ("select content from $mysql_table where id = $pid");
-                $row = mysql_fetch_array($q);
+        $q = mysqli_query ("select content from $mysql_table where id = $pid");
+                $row = mysqli_fetch_array($q);
         $content = $row["content"];
         $strs = explode ("\n", $content);
         for ($i = 0; $i < count ($strs); $i++) {
-            $qstr = ereg_replace("\r", "", $strs[$i]);
-            $qstr = ereg_replace("\"", "'", $qstr);
+            $qstr = preg_replace("\r", "", $strs[$i]);
+            $qstr = preg_replace("\"", "'", $qstr);
             echo "  vvv = vvv + \"> " . $qstr . "\\n\";\n";
         }
 ?>
@@ -168,8 +168,8 @@ if ($cwnd == 1 && $js == 0) echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;URL=$
 
 </head>
 
-<body <? if ($cwnd == 1) { 
-        echo "OnLoad=\"window.opener.location.reload(); window.close();\"";     
+<body <? if ($cwnd == 1) {
+        echo "OnLoad=\"window.opener.location.reload(); window.close();\"";
     }
 ?>>
 <? if ($cwnd == 0) { ?>
