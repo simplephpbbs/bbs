@@ -1,6 +1,6 @@
 <?
-include("lib.php3");
-include("setup.php3"); 
+include("lib.php");
+include("setup.php");
 
 if ( empty($AUTH_TYPE) ) { // If there is no Apache authentication
     if ( ($PHP_AUTH_NAME != "$admin_name") && ($PHP_AUTH_PW != "$admin_pwd" ) ){
@@ -13,36 +13,36 @@ if(empty($referer)) {
     $referer = $HTTP_REFERER;
 }
 
-/* 
+/*
   Here we have :
     $id of message
-    optional: 
+    optional:
     $start_date, $end_date
 */
 
 if (empty($start_date) ) {
-    $start_date = date("Y-m-d H:i:s", time() - $default_days*86400);  // 
+    $start_date = date("Y-m-d H:i:s", time() - $default_days*86400);  //
 }
 if (empty($end_date) ) {
     $end_date = date("Y-m-d H:i:s", time() );  // current time
 }
 
-$sd = ereg_replace("[^[:digit:]]","", $start_date);
-$ed = ereg_replace("[^[:digit:]]","", $end_date);
+$sd = preg_replace("[^[:digit:]]","", $start_date);
+$ed = preg_replace("[^[:digit:]]","", $end_date);
 
 
-mysql_pconnect("$mysql_host", "$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base");
+mysqli_connect("$mysql_host", "$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base");
 $q = "SELECT id,host,t,DATE_FORMAT(t, '%d/%m/%Y %H:%i') as tt ".
                    "from $stat_table  where id='$id' ".
                    "and t between $sd and $ed ".
                    "order by t $order_asc_or_desc";
 
-$res = mysql_query($q);
-print mysql_error();
+$res = mysqli_query($q);
+print mysqli_error();
 include("short_header.inc");
 
-$num = mysql_num_rows($res);
+$num = mysqli_num_rows($res);
 
 print "<A HREF=\"$referer\" class=t>$msg[back]</a>";
 if ($num > 0) {
@@ -74,9 +74,9 @@ if ($num > 0) {
 <td class=t><B><?echo $msg["host"]?></B></td>
 <td class=t><B><?echo $msg["date_visit"]?></B></td>
 
-<?  
-        while ( $d = mysql_fetch_array($res) ) {
-            $id  = $d["id"]; 
+<?
+        while ( $d = mysqli_fetch_array($res) ) {
+            $id  = $d["id"];
             
             print "<TR valign=center align=center bgcolor=" . RCount() . " height=11>";
             print "<td class=t>";
