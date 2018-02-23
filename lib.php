@@ -1,12 +1,12 @@
 <?
 /*
-*   $Id: lib.php3,v 1.7 1999/08/11 07:59:54 poma Exp $
+*   $Id: lib.php,v 1.7 1999/08/11 07:59:54 poma Exp $
 */
 
 
 /*=========================================================================
 *       Function SaveUserInCookie()
-            Saving vars itcusername É itcuseremail
+            Saving vars itcusername ï¿½ itcuseremail
             in Cookie
 /*=========================================================================*/
 Function SaveUserInCookie()
@@ -24,7 +24,7 @@ Function SaveUserInCookie()
 
 
 /*
-   Authorization with $PHP_AUTH_USER É $PHP_AUTH_PW
+   Authorization with $PHP_AUTH_USER ï¿½ $PHP_AUTH_PW
 */
 Function RequireAuthentication ($realm)
 {
@@ -34,31 +34,31 @@ Function RequireAuthentication ($realm)
     {
         $realm = "Unknown";
     }
-    if( ($PHP_AUTH_USER == "") || ($PHP_AUTH_PW == "") ) 
+    if( ($PHP_AUTH_USER == "") || ($PHP_AUTH_PW == "") )
     {
         Header("WWW-authenticate: basic realm=\"$realm\"");
         Header("HTTP/1.0 401 Unauthorized");
-    ?>    
+    ?>
         <HEAD></HEAD>
         <BODY>
        </BODY>
-    <?    
+    <?
         exit;
-    } 
+    }
 }
 
 /*=========================================================================*/
 
-Function EscapeChars ($text) 
+Function EscapeChars ($text)
 {
-    $text = ereg_replace("[\[\]<>&]","_",$text);
-    $text = ereg_replace("\"","'",$text); 
+    $text = preg_replace("[\[\]<>&]","_",$text);
+    $text = preg_replace("\"","'",$text);
     return $text;
 }
 
 /*=========================================================================*/
 
-Function Redirect ($url) 
+Function Redirect ($url)
 {
          Header("HTTP/1.0 302 Redirect");
          Header("Location: $url");
@@ -79,7 +79,7 @@ Function wrap_plain($str, $wrap = 79)
     $last_break = 0;
     while ($curr_pos < $len)
     {
-        if ( ($str[$curr_pos] == " ") || 
+        if ( ($str[$curr_pos] == " ") ||
              ($str[$curr_pos] == "\n") ||
              ($str[$curr_pos] == "\t")
            )
