@@ -1,14 +1,14 @@
 <?
-include("setup.php3"); 
+include("setup.php");
 if($js==0) $view_new_win = 0;
 
 $id = IntVal ("$id");
 $ppid = IntVal ("$pid");
 
-/*  If we reading top-level message, we don't want to 
+/*  If we reading top-level message, we don't want to
 *   see messages with other topics
 */
-if ($ppid == 0) {  
+if ($ppid == 0) {
     $ppid = $id;
 }
 
@@ -20,23 +20,23 @@ if ($days=="") {
         $days = $default_days;
     }
 
-mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base");
+mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base");
 
-$q=mysql_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
+$q=mysqli_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes ".
                    ",UNIX_TIMESTAMP(times) as ut ".
                    "from $mysql_table ".
                    "where level<='$maxlevel' ".
                    "and archive='N' order by times $order_asc_or_desc");
                    
-while($row = mysql_fetch_array($q)) {
+while($row = mysqli_fetch_array($q)) {
       $pid=$row["pid"];
       $id=$row["id"];
 
       $idtemp[$pid][]=$id;
       $order_arr[] = $id;
      
-      $pppid[$id] = $pid; 
+      $pppid[$id] = $pid;
       $timesm[$id]=$row["ttimes"];
       $ut[$id] = $row["ut"];          // UNIX timestamp
       $subjm[$id]=$row["subj"];
@@ -75,7 +75,7 @@ function order_for_output_recursive($pid)
           $parent_[$val]=$parentm[$val];
           return true;
       }
-  } 
+  }
   else {   // We are parent message
       $i = 0;
       $has_ok = false;
@@ -115,7 +115,7 @@ order_for_output_recursive($ppid);
 
 
 ### Setup order of messages
-function make_orderedidm($pid) 
+function make_orderedidm($pid)
 {
     global $is_ok, $orderedidm, $idtemp, $viewed_;
     $i = 0;
@@ -144,20 +144,20 @@ include("header.inc");
 <!--
 function MakeMsg (param) {
     if (window.name != "newmsg") {
-        w = window.open ("newmsg.php3?" + param, "newmsg", "<? echo $js_window_params ?>");
+        w = window.open ("newmsg.php?" + param, "newmsg", "<? echo $js_window_params ?>");
         w.focus();
     }
     else {
-        return 'newmsg.php3?' + param ;
+        return 'newmsg.php?' + param ;
     }
     return '#';
 }
 //-->
 </SCRIPT>
 
-<a href="<? echo "newmsg.php3?id=0&days=$days&lang=$lang&js=$js" ?>" <?mouse_text($msg["new_thread"])?> onClick="window.status=''; this.href=MakeMsg('id=0'); window.location='index.php3?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>';"><?echo $msg["new_thread"]?></a>
+<a href="<? echo "newmsg.php?id=0&days=$days&lang=$lang&js=$js" ?>" <?mouse_text($msg["new_thread"])?> onClick="window.status=''; this.href=MakeMsg('id=0'); window.location='index.php?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>';"><?echo $msg["new_thread"]?></a>
 <br>
-<A href="./index.php3?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" class=t <?mouse_text($msg["all_articles"])?>><?echo $msg["all_articles"]?></A>
+<A href="./index.php?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" class=t <?mouse_text($msg["all_articles"])?>><?echo $msg["all_articles"]?></A>
 <br>
 <br>
 
@@ -193,7 +193,7 @@ function lastthislevelkey($key,$level)
 if(is_array($orderedidm))
 {
 
-while ( list( $key, $val ) = each($orderedidm)) 
+while ( list( $key, $val ) = each($orderedidm))
 {
  if($val!=0) //skip first empty line
  {
@@ -228,13 +228,13 @@ while ( list( $key, $val ) = each($orderedidm))
 <table width="100%" border="0" bgcolor="<? echo $bgcolor1; ?>" cellpadding="0" cellspacing="0">
 <tr>
 <td align="center">
-<A href="newmsg.php3?id=<?echo $id;?>&reply=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&reply=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>'); window.location='index.php3?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'" <?mouse_text($msg["continue_thread"]);?>><?echo $msg["continue_thread"]?></A>
+<A href="newmsg.php?id=<?echo $id;?>&reply=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&reply=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>'); window.location='index.php?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'" <?mouse_text($msg["continue_thread"]);?>><?echo $msg["continue_thread"]?></A>
 </td>
 
 <? if ($level < $maxlevel && $pid!=0): ?>
 
 <td align="center">
-<A href="newmsg.php3?id=<?echo $id;?>&sub_thread=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&sub_thread=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>'); window.location='index.php3?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'" <?mouse_text($msg["open_subthread"]);?>><?echo $msg["open_subthread"]?></A>
+<A href="newmsg.php?id=<?echo $id;?>&sub_thread=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&sub_thread=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>'); window.location='index.php?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'" <?mouse_text($msg["open_subthread"]);?>><?echo $msg["open_subthread"]?></A>
 </td>
 
 <? endif; //level ?>
