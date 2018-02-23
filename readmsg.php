@@ -1,26 +1,26 @@
 <?
 
-include("setup.php3"); 
+include("setup.php");
 if($js==0) $view_new_win = 0;
 
-$result=mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base",$result);
+$result=mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base",$result);
 
 $id = IntVal ("$id");
 $ppid = IntVal ("$pid");
 
-/*  If we reading top-level message, we don't want to 
+/*  If we reading top-level message, we don't want to
 *   see messages with other topics
 */
-if($ppid == 0) {  
+if($ppid == 0) {
     $ppid = $id;
 }
 
 if($id=="") $id=0;
 $iid = $id;
 
-$q=mysql_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes from $mysql_table where id=$id");
-$row = mysql_fetch_array($q);
+$q=mysqli_query("select *,date_format(times, '%d/%m/%Y %H:%i') as ttimes from $mysql_table where id=$id");
+$row = mysqli_fetch_array($q);
 $author = $row["author"];
 $subj = $row["subj"];
 $ttimes = $row["ttimes"];
@@ -54,7 +54,7 @@ include("short_header.inc");
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!--
 <?
-if(!(ereg("search.php3",$HTTP_REFERER)))
+if(!(preg("search.php",$HTTP_REFERER)))
 {
     echo "if (($view_new_win && $set_cookie && $first_view)) {";
     echo "opener.location.reload();";
@@ -64,11 +64,11 @@ if(!(ereg("search.php3",$HTTP_REFERER)))
 
 function MakeMsg (param) {
     if (window.name != "newmsg") {
-        w = window.open ("newmsg.php3?" + param, "newmsg", "<? echo $js_window_params ?>");
+        w = window.open ("newmsg.php?" + param, "newmsg", "<? echo $js_window_params ?>");
         w.focus();
     }
     else {
-        return 'newmsg.php3?' + param ;
+        return 'newmsg.php?' + param ;
     }
     return '#';
 }
@@ -100,13 +100,13 @@ function MakeMsg (param) {
 <table width="100%" border="0" bgcolor="<? echo $bgcolor1; ?>" cellpadding="0" cellspacing="0">
 <tr>
 <td align="center">
-<A href="newmsg.php3?id=<?echo $id;?>&reply=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&reply=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>')" <?mouse_text($msg["continue_thread"]);?>><?echo $msg["continue_thread"]?></A>
+<A href="newmsg.php?id=<?echo $id;?>&reply=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&reply=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>')" <?mouse_text($msg["continue_thread"]);?>><?echo $msg["continue_thread"]?></A>
 </td>
 
 <? if ($level < $maxlevel && $pid!=0): ?>
 
 <td align="center">
-<A href="newmsg.php3?id=<?echo $id;?>&sub_thread=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&sub_thread=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>')"<?mouse_text($msg["open_subthread"]);?>><?echo $msg["open_subthread"]?></A>
+<A href="newmsg.php?id=<?echo $id;?>&sub_thread=1&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=<?echo $id;?>&sub_thread=1&js=<? echo $js; ?>&lang=<? echo $lang; ?>')"<?mouse_text($msg["open_subthread"]);?>><?echo $msg["open_subthread"]?></A>
 </td>
 
 <? endif; //level ?>
@@ -126,21 +126,21 @@ function MakeMsg (param) {
 
 <br>
 <br>
-<a href="newmsg.php3?id=0&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=0&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>');"><?echo $msg["new_thread"]?></a>
+<a href="newmsg.php?id=0&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.status=''; this.href=MakeMsg('id=0&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>');"><?echo $msg["new_thread"]?></a>
 <br>
-<a href="allmsg.php3?id=<? echo $id; ?>&pid=<? echo $pid; ?>&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.opener.location='allmsg.php3?id=<? echo $ppid; ?>&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'; window.close(); return false;"><?echo $msg["all_thread_articles"]?></a>
+<a href="allmsg.php?id=<? echo $id; ?>&pid=<? echo $pid; ?>&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>" onClick="window.opener.location='allmsg.php?id=<? echo $ppid; ?>&days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>'; window.close(); return false;"><?echo $msg["all_thread_articles"]?></a>
 <? if ( ($view_new_win > 0) && ($js == 1)) {?>
 <BR><a href="#" onclick="window.close(); return false;"><?echo $msg["close_win"]?></a>
 <?}
 else {?>
-<BR><a href="./index.php3?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>"><?echo $msg["full_list"]?></a> 
+<BR><a href="./index.php?days=<? echo $days; ?>&js=<? echo $js; ?>&lang=<? echo $lang; ?>"><?echo $msg["full_list"]?></a>
 <?}?>
 <br>
 <br>
 
 <?
 $view_articles_for_last=0;
-include("forum.php3");
+include("forum.php");
 ?>
 
 
