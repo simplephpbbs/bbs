@@ -1,6 +1,6 @@
 <?
-include("lib.php3");
-include("setup.php3");
+include("lib.php");
+include("setup.php");
 
 if ( empty($AUTH_TYPE) ) { // If there is no Apache authentication
     if ( ($PHP_AUTH_NAME != "$admin_name") && ($PHP_AUTH_PW != "$admin_pwd" ) ){
@@ -10,23 +10,23 @@ if ( empty($AUTH_TYPE) ) { // If there is no Apache authentication
 }
  
 if($js==0) $view_new_win = 0;
-if(isset($cancel)) Header("Location: admin.php3?js=$js&lang=$lang"); //without JS
+if(isset($cancel)) Header("Location: admin.php?js=$js&lang=$lang"); //without JS
 
-$result = mysql_pconnect("$mysql_host","$mysql_user","$mysql_password");
-mysql_select_db("$mysql_base",$result);
+$result = mysqli_connect("$mysql_host","$mysql_user","$mysql_password");
+mysqli_select_db("$mysql_base",$result);
 
 $id = IntVal ("$id");
 
 $cwnd = 0;
 
-if ($action == "ok") 
+if ($action == "ok")
 {
- $q=mysql_query("update $mysql_table set subj='$subj', author='$author', email='$email', content='$content' where id='$id'");
+ $q=mysqli_query("update $mysql_table set subj='$subj', author='$author', email='$email', content='$content' where id='$id'");
  $cwnd = 1;
 }
 
-$q=mysql_query("select * from $mysql_table where id = " . $id);
-$row = mysql_fetch_array($q);
+$q=mysqli_query("select * from $mysql_table where id = " . $id);
+$row = mysqli_fetch_array($q);
 $author = $row["author"];
 $email = $row["email"];
 $subj = $row["subj"];
@@ -39,7 +39,7 @@ $content = htmlspecialchars($row["content"]);
 <title>FORUM</title>
 <?
 //close window without JS
-if ($cwnd == 1) echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;URL=admin.php3?js=$js&lang=$lang\">";
+if ($cwnd == 1) echo "<META HTTP-EQUIV=\"Refresh\" CONTENT=\"0;URL=admin.php?js=$js&lang=$lang\">";
 ?>
 <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
 <!--
@@ -61,7 +61,7 @@ function formsubmit() {
 </head>
 
 <body <?
-    if ($cwnd == 1) { echo " onload=\"window.close();window.opener.location.href='admin.php3?js=$js&lang=$lang'\""; }
+    if ($cwnd == 1) { echo " onload=\"window.close();window.opener.location.href='admin.php?js=$js&lang=$lang'\""; }
 ?>>
 <? if ($cwnd == 0) { ?>
 <div align="center">
