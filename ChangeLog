@@ -20,7 +20,7 @@ cvs tag forum_2_0_11
 
 03 May 2000
     * Added lang_pl.inc for polish translation. [poma]
-      Thanx to "Leszek 'Leon' Krupi�ski" <d@z.pl>
+      Thanx to "Leszek 'Leon' Krupiñski" <d@z.pl>
 
 cvs tag forum_2_0_10
 
@@ -60,7 +60,7 @@ cvs tag forum_2_0_7
 
 27/09/99
     - Added lang_dk.inc for Danish translation. (poma)
-      Thanx to  Morten Gade S�rensen <morten@aurora.ms>
+      Thanx to  Morten Gade SÜrensen <morten@aurora.ms>
     
 20/09/99
     - MySQL table autocreating bug with table name fixed (poma)
